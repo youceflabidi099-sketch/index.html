@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteStars Luxury App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* نظام الألوان الذكي */
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #ffffff);
+            --card-bg: var(--tg-theme-secondary-bg-color, #f9f9f9);
+            --text-main: var(--tg-theme-text-color, #111111);
+            --text-hint: var(--tg-theme-hint-color, #777777);
+            --gold: #d4af37;
+            --blue: #0088cc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+        }
+
+        /* ─────────────────── HEADER ─────────────────── */
+        .header {
+            text-align: center;
+            padding: 25px 20px;
+            background: var(--card-bg);
+            border-bottom: 2px solid var(--gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            margin: 0 0 12px 0;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 2px 4px rgba(212, 175, 55, 0.1);
+            letter-spacing: 1px;
+        }
+
+        .header a {
+            display: inline-block;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border: 2px solid var(--gold);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .header a:active {
+            background: rgba(212, 175, 55, 0.1);
+            transform: scale(0.95);
+        }
+
+        /* ─────────────────── CONTENT ─────────────────── */
+        #content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* البطاقات الاحترافية */
+        .luxury-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            flex-shrink: 0;
+        }
+
+        .luxury-card:active {
+            transform: scale(0.97);
+            background: rgba(212, 175, 55, 0.08);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.15);
+        }
+
+        .icon-wrap {
+            width: 50px;
+            height: 50px;
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .card-body {
+            flex-grow: 1;
+            margin-right: 15px;
+            text-align: right;
+        }
+
+        .card-body b {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .card-body small {
+            color: var(--text-hint);
+            font-size: 13px;
+        }
+
+        .card-arrow {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 18px;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .luxury-card.active .card-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* قوائم الباقات */
+        .drop-list {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 0 0 20px 20px;
+            border: 1px solid rgba(0,0,0,0.03);
+            border-top: none;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+            flex-shrink: 0;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: -8px;
+            margin-bottom: 8px;
+        }
+
+        .drop-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .drop-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .drop-list::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        .list-item {
+            padding: 16px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.02);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item:active {
+            background: rgba(212, 175, 55, 0.05);
+            padding-left: 20px;
+        }
+
+        .item-info b {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 15px;
+        }
+
+        .item-info small {
+            color: var(--text-hint);
+            font-size: 13px;
+        }
+
+        .order-btn {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .order-btn:active {
+            background: #0077b3;
+            transform: scale(0.95);
+        }
+
+        /* تفاصيل الدفع */
+        .pay-detail {
+            display: none;
+            padding: 18px;
+            background: rgba(212, 175, 55, 0.08);
+            border-right: 5px solid var(--gold);
+            font-size: 14px;
+            line-height: 1.8;
+            animation: slideDown 0.3s ease;
+        }
+
+        .pay-detail b {
+            color: var(--text-main);
+            display: block;
+            margin-top: 8px;
+            margin-bottom: 5px;
+        }
+
+        .pay-detail:first-of-type {
+            border-bottom: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .phone-highlight {
+            font-size: 1.4rem;
+            color: var(--blue);
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        /* ─────────────────── FOOTER ─────────────────── */
+        .footer {
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-hint);
+            flex-shrink: 0;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            background: var(--card-bg);
+        }
+
+        /* Scrollbar for main content */
+        #content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #content::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        #content::-webkit-scrollbar-thumb:hover {
+            background: #bbb;
+        }
+
+        /* Animation */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>ELITE STARS ✨</h1>
+        <a href="#" onclick="event.preventDefault(); openProofs()">🤗 إثباتات الضمان</a>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="content">
+
+        <!-- STARS CARD -->
+        <div class="luxury-card" onclick="openMenu('stars', this)">
+            <div class="icon-wrap">⭐</div>
+            <div class="card-body">
+                <b>نجوم تلغرام (Stars)</b>
+                <small>باقات شحن سريعة وفورية</small>
+            </div>
+            <span class="card-arrow">▼</span>
+        </div>
+        <div id="stars" class="drop-list"></div>
+
+        <!-- PREMIUM CARD -->
+        <div class="luxury-card" onclick="openMenu('premium', this)">
+            <div class="icon-wrap">🌟</div>
+            <div class="card-body">
+                <b>اشتراك بريميوم</b>
+                <small>تفعيل فوري لجميع المدد</small>
+            </div>
+            <span class="card-arrow">▼</span>
+        </div>
+        <div id="premium" class="drop-list"></div>
+
+        <!-- PAYMENT CARD -->
+        <div class="luxury-card" onclick="openMenu('payment', this)">
+            <div class="icon-wrap">💳</div>
+            <div class="card-body">
+                <b>معلومات الدفع</b>
+                <small>CCP / Flexy</small>
+            </div>
+            <span class="card-arrow">▼</span>
+        </div>
+        <div id="payment" class="drop-list">
+            <div class="list-item" onclick="togglePay('ccp-box'); event.stopPropagation();">
+                <span>🏦 الدفع عبر حساب CCP</span>
+            </div>
+            <div id="ccp-box" class="pay-detail">
+                <b>💳 بيانات حساب CCP</b>
+                <div>الاسم واللقب: <b>M.LABIDI MOHAMED ISLAM</b></div>
+                <div>رقم الـ RIP: <b>38 00411839</b></div>
+                <div>المفتاح: <b>08</b></div>
+            </div>
+            <div class="list-item" onclick="togglePay('flexy-box'); event.stopPropagation();">
+                <span>📱 الدفع عبر Flexy</span>
+            </div>
+            <div id="flexy-box" class="pay-detail">
+                <b>📱 رقم الفليكسي المخصص</b>
+                <div class="phone-highlight">0549894647</div>
+                <small style="color: var(--text-hint); margin-top: 5px; display: block;">
+                    ⚠️ تأكد من كتابة الرقم بشكل صحيح قبل الإرسال
+                </small>
+            </div>
+        </div>
+
+        <!-- SUPPORT CARD -->
+        <div class="luxury-card" onclick="contactSupport()" style="border-color: var(--blue);">
+            <div class="icon-wrap">🎧</div>
+            <div class="card-body">
+                <b>التواصل مع الدعم</b>
+                <small>قناة @wuldc جاهزة لمساعدتك</small>
+            </div>
+            <span style="color: var(--blue); font-size: 20px;">→</span>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>✨ EliteStars Luxury App - جميع الحقوق محفوظة © 2026</p>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const exchange = 280;
+        const starFee = 1.30; // فائدة 30% للنجوم
+        const premFee = 1.15; // فائدة 15% للبريميوم
+
+        let activeCard = null;
+
+        function openMenu(id, cardElement) {
+            const el = document.getElementById(id);
+            const isOpen = el.style.display === 'block';
+
+            // إغلاق جميع القوائم والبطاقات
+            document.querySelectorAll('.drop-list').forEach(m => m.style.display = 'none');
+            document.querySelectorAll('.luxury-card').forEach(c => c.classList.remove('active'));
+
+            if (!isOpen) {
+                if (id === 'stars') drawStars();
+                if (id === 'premium') drawPremium();
+                
+                el.style.display = 'block';
+                cardElement.classList.add('active');
+                activeCard = id;
+            }
+        }
+
+        function drawStars() {
+            const pkgs = [50, 75, 100, 150, 250, 350, 500];
+            document.getElementById('stars').innerHTML = pkgs.map(s => {
+                const dzd = Math.ceil((s * 0.015) * starFee * exchange);
+                return `
+                    <div class="list-item">
+                        <button class="order-btn" onclick="order('${s} نجمة', '${dzd} د.ج')">اطلب</button>
+                        <div class="item-info">
+                            <b>${s} نجمة</b>
+                            <small>${dzd} د.ج</small>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function drawPremium() {
+            const pkgs = [
+                {t: "سنة واحدة", p: 28.99},
+                {t: "6 أشهر", p: 15.99},
+                {t: "3 أشهر", p: 11.99}
+            ];
+            document.getElementById('premium').innerHTML = pkgs.map(i => {
+                const dzd = Math.ceil(i.p * premFee * exchange);
+                return `
+                    <div class="list-item">
+                        <button class="order-btn" onclick="order('بريميوم ${i.t}', '${dzd} د.ج')">اطلب</button>
+                        <div class="item-info">
+                            <b>بريميوم ${i.t}</b>
+                            <small>${dzd} د.ج</small>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function togglePay(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function openProofs() {
+            tg.openTelegramLink('https://t.me/Elitestarproofs');
+        }
+
+        function contactSupport() {
+            tg.openTelegramLink('https://t.me/wuldc');
+        }
+
+        function order(item, price) {
+            const user = tg.initDataUnsafe?.user;
+            const orderData = {
+                item: item,
+                price: price,
+                user: user?.username || user?.first_name || "Guest",
+                userId: user?.id || "unknown",
+                timestamp: new Date().toISOString()
+            };
+
+            tg.sendData(JSON.stringify(orderData));
+            tg.close();
+        }
+    </script>
+</body>
+</html>
